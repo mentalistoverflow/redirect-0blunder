@@ -2,6 +2,14 @@
   command = "echo 'No build needed'"
   publish = "."
 
+# Proxy all traffic to Cloudflare tunnel (status 200 = proxy, user stays on 0blunder.netlify.app)
+# IMPORTANT: update the URL below when the tunnel changes
+[[redirects]]
+  from = "/*"
+  to = "https://consultant-horizontal-outdoors-advisory.trycloudflare.com/:splat"
+  status = 200
+  force = true
+
 [[headers]]
   for = "/current-url.json"
   [headers.values]
