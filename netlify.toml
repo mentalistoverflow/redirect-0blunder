@@ -1,27 +1,5 @@
-[build]
-  command = "echo 'No build needed'"
-  publish = "."
-
-# Proxy all traffic to Cloudflare tunnel (status 200 = proxy, user stays on 0blunder.netlify.app)
-# IMPORTANT: update the URL below when the tunnel changes
 [[redirects]]
   from = "/*"
-  to = "https://consultant-horizontal-outdoors-advisory.trycloudflare.com/:splat"
+  to = "https://timer-alien-foto-diversity.trycloudflare.com/:splat"
   status = 200
   force = true
-
-[[headers]]
-  for = "/current-url.json"
-  [headers.values]
-    Access-Control-Allow-Origin = "*"
-    Cache-Control = "no-cache, no-store, must-revalidate"
-    Pragma = "no-cache"
-    Expires = "0"
-
-[[headers]]
-  for = "/*"
-  [headers.values]
-    X-Frame-Options = "DENY"
-    X-Content-Type-Options = "nosniff"
-    Referrer-Policy = "strict-origin-when-cross-origin"
-    X-XSS-Protection = "1; mode=block"
