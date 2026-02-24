@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0blunder — Coach IA d'échecs</title>
+    <meta http-equiv="refresh" content="8;url=https://trycloudflare.com">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #1a1a2e;
+            --surface: #16213e;
+            --primary: #e94560;
+            --accent: #f5c518;
+            --text: #eee;
+            --text-muted: #999;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(circle at 20% 50%, rgba(233, 69, 96, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(245, 197, 24, 0.06) 0%, transparent 50%);
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 3rem 2rem;
+            background: rgba(22, 33, 62, 0.7);
+            border-radius: 20px;
+            border: 1px solid rgba(233, 69, 96, 0.2);
+            backdrop-filter: blur(20px);
+            max-width: 440px;
+            width: 90%;
+        }
+
+        .logo {
+            font-size: 3.5rem;
+            margin-bottom: 0.5rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tagline {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+        }
+
+        .spinner {
+            width: 22px;
+            height: 22px;
+            border: 3px solid rgba(233, 69, 96, 0.2);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .error {
+            display: none;
+            color: var(--primary);
+            margin-top: 1rem;
+        }
+
+        .error button {
+            margin-top: 0.75rem;
+            padding: 0.6rem 1.5rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: opacity 0.2s;
+        }
+
+        .error button:hover { opacity: 0.85; }
+
+        .offline {
+            display: none;
+            color: var(--accent);
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">♚</div>
+        <h1>0blunder</h1>
+        <p class="tagline">Coach IA d'échecs</p>
+
+        <div class="status" id="status">
+            <div class="spinner"></div>
+            <span id="status-text">Connexion au serveur…</span>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress"></div>
+        </div>
+
+        <div class="error" id="error">
+            <p>Le serveur est actuellement hors ligne.</p>
+            <button onclick="location.reload()">Réessayer</button>
+        </div>
+
+        <div class="offline" id="offline">
+            <p>Vérifiez votre connexion internet.</p>
+        </div>
+    </div>
+
+    <script>
+        const progress = document.getElementById('progress');
+        const statusText = document.getElementById('status-text');
+        const errorDiv = document.getElementById('error');
+        const offlineDiv = document.getElementById('offline');
+        const statusDiv = document.getElementById('status');
+
+        let progressValue = 0;
+        const progressInterval = setInterval(() => {
+            progressValue = Math.min(progressValue + Math.random() * 15, 90);
+            progress.style.width = progressValue + '%';
+        }, 300);
+
+        async function redirect() {
+            try {
+                const res = await fetch('/current-url.json?t=' + Date.now());
+                if (!res.ok) throw new Error('Fetch failed');
+                const data = await res.json();
+                if (data.url && data.url !== 'https://trycloudflare.com') {
+                    clearInterval(progressInterval);
+                    progress.style.width = '100%';
+                    statusText.textContent = 'Redirection…';
+                    setTimeout(() => { window.location.href = data.url; }, 500);
+                } else {
+                    throw new Error('No valid URL');
+                }
+            } catch (e) {
+                clearInterval(progressInterval);
+                statusDiv.style.display = 'none';
+                if (!navigator.onLine) {
+                    offlineDiv.style.display = 'block';
+                } else {
+                    errorDiv.style.display = 'block';
+                }
+            }
+        }
+
+        redirect();
+    </script>
+</body>
+</html>
