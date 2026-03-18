@@ -293,7 +293,7 @@
   transition: background-color 0.15s;
 }
 .menu li a:hover, .menu li button:hover { background-color: color-mix(in oklch, var(--color-base-content) 10%, transparent); }
-.menu-title { padding: 0.5rem 0.75rem; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.5; }
+.menu-title { padding: 0.5rem 0.75rem; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; opacity: 1; }
 .menu-lg li a, .menu-lg li button { padding: 0.625rem 1rem; font-size: 0.9375rem; }
 
 /* ── Navbar ───────────────────────────────────────────────────────────────── */
