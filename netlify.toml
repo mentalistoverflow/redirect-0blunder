@@ -1,6 +1,6 @@
 [[redirects]]
   from = "/api/*"
-  to = "https://meal-vol-visiting-containing.trycloudflare.com/api/:splat"
+  to = "https://wooden-magic-questions-dakota.trycloudflare.com/api/:splat"
   status = 200
   force = true
 
