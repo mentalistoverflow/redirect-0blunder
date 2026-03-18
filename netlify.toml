@@ -5,6 +5,13 @@
   force = true
 
 [[redirects]]
+  from = "/ws/*"
+  to = "https://wooden-magic-questions-dakota.trycloudflare.com/ws/:splat"
+  status = 200
+  force = true
+
+# SPA fallback — toutes les routes non-fichier vers index.html
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200

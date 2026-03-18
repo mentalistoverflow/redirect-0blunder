@@ -1,0 +1,274 @@
+/* ========================================================================
+   Chess-Learn — Consolidated Responsive Breakpoints
+   Overrides for DaisyUI drawer, sidebar, content, right panel
+   Glass fallbacks for low-power devices
+   ======================================================================== */
+
+/* ── Desktop large (> 1400px) ───────────────────────────────────────────── */
+@media (min-width: 1400px) {
+  .main-content {
+    max-width: 1400px;
+    padding: 24px 32px;
+  }
+
+  .right-panel {
+    width: 360px;
+  }
+}
+
+/* ── Desktop (1200px - 1399px) ──────────────────────────────────────────── */
+@media (max-width: 1399px) {
+  .right-panel {
+    width: 300px;
+  }
+}
+
+/* ── Small desktop / Laptop (< 1200px) ──────────────────────────────────── */
+@media (max-width: 1199px) {
+  .right-panel {
+    width: 280px;
+  }
+
+  #main-sidebar {
+    width: 220px !important;
+  }
+
+  #main-sidebar .menu li a {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+  }
+}
+
+/* ── Tablet (< 900px) ──────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .right-panel {
+    display: none !important;
+  }
+
+  .main-content {
+    padding: 16px;
+  }
+}
+
+/* ── Mobile large (< 767px) ─────────────────────────────────────────────── */
+@media (max-width: 767px) {
+  /* Prevent horizontal scroll on mobile */
+  html, body {
+    overflow-x: hidden;
+  }
+  .drawer-content {
+    overflow-x: hidden;
+  }
+
+  .main-content {
+    padding: 12px;
+    max-width: 100vw;
+    box-sizing: border-box;
+  }
+
+  #main-navbar {
+    min-height: 48px;
+    padding: 0 12px;
+  }
+
+  .layout-body {
+    min-height: calc(100vh - 48px);
+  }
+
+  /* Stack layout vertically on mobile */
+  .card-header {
+    padding: 12px 16px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
+/* ── Mobile (< 600px) — Glass fallback for performance ────────────────── */
+@media (max-width: 600px) {
+  .main-content {
+    padding: 8px;
+  }
+
+  .card-header {
+    padding: 10px 12px;
+  }
+
+  .card-title {
+    font-size: 1rem;
+  }
+
+  /* Disable backdrop-filter on small devices for performance */
+  .glass,
+  .glass-card,
+  .card,
+  #main-sidebar,
+  #main-navbar,
+  .right-panel {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /* Fallback to semi-opaque backgrounds */
+  #main-sidebar {
+    background: var(--color-base-200) !important;
+  }
+
+  #main-navbar {
+    background: var(--color-base-100) !important;
+  }
+
+  .card {
+    background: var(--color-base-200);
+  }
+}
+
+/* ── Mobile small (< 479px) ─────────────────────────────────────────────── */
+@media (max-width: 479px) {
+  .main-content {
+    padding: 6px;
+  }
+
+  #main-sidebar {
+    width: 260px !important;
+  }
+}
+
+/* ── Mobile tiny (< 359px) ──────────────────────────────────────────────── */
+@media (max-width: 359px) {
+  #main-sidebar {
+    width: 240px !important;
+  }
+}
+
+/* ── Landscape mobile ───────────────────────────────────────────────────── */
+@media (max-height: 500px) and (orientation: landscape) {
+  .layout-body {
+    min-height: calc(100vh - 48px);
+  }
+
+  #main-sidebar .sidebar-brand {
+    padding: 4px 4px 10px;
+  }
+
+  #main-sidebar .menu li a {
+    padding: 6px 12px;
+  }
+}
+
+
+/* =========================================================================
+   Admin Panel - Responsive Fixes
+   ========================================================================= */
+
+/* Mobile: prevent FAB (AI widget) from obscuring page content */
+@media (max-width: 767px) {
+  .main-content {
+    padding-bottom: 88px;
+  }
+}
+
+/* Mobile: fix toggle description overflow in admin auto-analysis */
+@media (max-width: 767px) {
+  .label.cursor-pointer.justify-start > div,
+  .label.cursor-pointer.justify-start.gap-3 > div {
+    min-width: 0;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .label.cursor-pointer.justify-start > div .text-xs,
+  .label.cursor-pointer.justify-start.gap-3 > div .text-xs {
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+}
+
+/* Mobile: fix section headers with long titles + action buttons */
+@media (max-width: 479px) {
+  .admin-tab-content .flex.justify-between.items-center,
+  .card-body > .flex.justify-between.items-center {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+
+  .admin-tab-content .flex.justify-between.items-center > .btn,
+  .card-body > .flex.justify-between.items-center > .btn {
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+}
+
+/* Mobile: fix help text overflow in admin config sections */
+@media (max-width: 767px) {
+  .admin-tab-content .text-sm.opacity-60,
+  .admin-tab-content .text-xs.opacity-60,
+  .admin-tab-content .label-text-alt.opacity-60 {
+    word-break: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+  }
+}
+
+/* Mobile: fix input URL overflow in admin config */
+@media (max-width: 767px) {
+  .admin-tab-content .input {
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+
+
+/* =========================================================================
+   Admin Panel - Responsive Fixes v2 (compléments)
+   ========================================================================= */
+
+/* Mobile: reposition FAB to reduce content overlap */
+@media (max-width: 767px) {
+  .ai-widget {
+    bottom: 8px;
+    right: 4px;
+  }
+}
+
+/* Mobile: when section header wraps, align button to the right */
+@media (max-width: 479px) {
+  .admin-tab-content .flex.justify-between.items-center,
+  .card-body > .flex.justify-between.items-center {
+    align-items: center;
+  }
+
+  .admin-tab-content .flex.justify-between.items-center > .card-title,
+  .card-body > .flex.justify-between.items-center > .card-title {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .admin-tab-content .flex.justify-between.items-center > .btn,
+  .card-body > .flex.justify-between.items-center > .btn {
+    flex: 0 0 auto;
+  }
+}
+
+
+
+/* =========================================================================
+   Admin Panel - Responsive Fixes v3 (FAB overlap safety zone)
+   ========================================================================= */
+
+/* Mobile: add right padding to admin cards to prevent FAB overlap */
+@media (max-width: 767px) {
+  .admin-tab-content .card-body {
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+
+  /* Extra padding where FAB overlaps critical right-aligned content */
+  #tab-users .card-body {
+    padding-right: 60px;
+  }
+}
+
+

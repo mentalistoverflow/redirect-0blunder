@@ -1,213 +1,72 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>0blunder — Coach IA d'échecs</title>
-    <meta http-equiv="refresh" content="8;url=https://trycloudflare.com">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+  <!-- Theme/language init - external for CSP compliance -->
+  <script src="/static/js/theme-init.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#1a1a2e">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="{{SITE_NAME}}">
+  <link rel="apple-touch-icon" href="/static/icons/icon-192.png">
+  <title>{{SITE_NAME}}</title>
 
-        :root {
-            --bg: #1a1a2e;
-            --surface: #16213e;
-            --primary: #e94560;
-            --accent: #f5c518;
-            --text: #eee;
-            --text-muted: #999;
-        }
+  <!-- Favicon - chess knight -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#9822;</text></svg>">
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
+  <!-- Preconnect / DNS prefetch for external resources -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://lichess.org">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background:
-                radial-gradient(circle at 20% 50%, rgba(233, 69, 96, 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 80% 50%, rgba(245, 197, 24, 0.06) 0%, transparent 50%);
-            z-index: 0;
-        }
+  <!-- DaisyUI 5 (CSS components) - MUST be before Tailwind so Tailwind can override -->
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+  <!-- DaisyUI component fallback (unlayered) - ensures components render even if CDN @layer fails -->
+  <link rel="stylesheet" href="/static/css/daisyui-components.css?v=20260225i">
 
-        .container {
-            position: relative;
-            z-index: 1;
-            text-align: center;
-            padding: 3rem 2rem;
-            background: rgba(22, 33, 62, 0.7);
-            border-radius: 20px;
-            border: 1px solid rgba(233, 69, 96, 0.2);
-            backdrop-filter: blur(20px);
-            max-width: 440px;
-            width: 90%;
-        }
+  <!-- Tailwind CSS 4 (browser CDN) - required by DaisyUI 5 for utility classes -->
+  <script src="/static/vendor/tailwindcss-browser.min.js"></script>
 
-        .logo {
-            font-size: 3.5rem;
-            margin-bottom: 0.5rem;
-            animation: float 3s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
-        }
-
-        h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 0.3rem;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .tagline {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            margin-bottom: 2rem;
-        }
-
-        .status {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
-            font-size: 1rem;
-        }
-
-        .spinner {
-            width: 22px;
-            height: 22px;
-            border: 3px solid rgba(233, 69, 96, 0.2);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 2px;
-            overflow: hidden;
-            margin-bottom: 1.5rem;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--accent));
-            border-radius: 2px;
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        .error {
-            display: none;
-            color: var(--primary);
-            margin-top: 1rem;
-        }
-
-        .error button {
-            margin-top: 0.75rem;
-            padding: 0.6rem 1.5rem;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: opacity 0.2s;
-        }
-
-        .error button:hover { opacity: 0.85; }
-
-        .offline {
-            display: none;
-            color: var(--accent);
-            font-size: 0.9rem;
-            margin-top: 1rem;
-        }
-    </style>
+  <!-- Stylesheets (order matters) -->
+  <link rel="stylesheet" href="/static/css/themes.css">
+  <link rel="stylesheet" href="/static/css/tailwind-utilities.css?v=20260225i">
+  <link rel="stylesheet" href="/static/css/main.css">
+  <link rel="stylesheet" href="/static/css/style.css?v=20260306a">
+  <link rel="stylesheet" href="/static/css/responsive.css?v=20260225i">
+  <link rel="stylesheet" href="/static/vendor/chessground.base.css">
+  <link rel="stylesheet" href="/static/vendor/chessground.brown.css">
+  <link rel="stylesheet" href="/static/vendor/chessground.cburnett.css">
 </head>
 <body>
-    <div class="container">
-        <div class="logo">♚</div>
-        <h1>0blunder</h1>
-        <p class="tagline">Coach IA d'échecs</p>
 
-        <div class="status" id="status">
-            <div class="spinner"></div>
-            <span id="status-text">Connexion au serveur…</span>
-        </div>
+  <!-- Skip to content link for keyboard navigation (WCAG 2.1 AA) -->
+  <a href="#app" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:bg-primary focus:text-primary-content focus:px-4 focus:py-2 focus:rounded">
+    Aller au contenu principal
+  </a>
 
-        <div class="progress-bar">
-            <div class="progress-fill" id="progress"></div>
-        </div>
+  <!--
+    Layout is dynamically injected by app.js via layout.js.
+    Auth page renders without sidebar (full-screen).
+    Logged-in pages use DaisyUI drawer layout (sidebar + content).
+  -->
+  <div id="app" class="auth-container" role="main">
+    <!-- Initial loading state - replaced by app.js -->
+    <div class="spinner"></div>
+  </div>
 
-        <div class="error" id="error">
-            <p>Le serveur est actuellement hors ligne.</p>
-            <button onclick="location.reload()">Réessayer</button>
-        </div>
+  <!-- Backend URL for WebSocket (dynamic - empty = same-origin, set for proxy deploy) -->
+  <script src="/config/backend-url.js"></script>
 
-        <div class="offline" id="offline">
-            <p>Vérifiez votre connexion internet.</p>
-        </div>
-    </div>
+  <!-- Vendor Scripts (Chart.js lazy-loaded by dashboard.js/review.js) -->
+  <!-- Chess.js is ES module - load wrapper that exposes Chess globally -->
+  <script type="module" src="/static/vendor/chess-global.js"></script>
 
-    <script>
-        const progress = document.getElementById('progress');
-        const statusText = document.getElementById('status-text');
-        const errorDiv = document.getElementById('error');
-        const offlineDiv = document.getElementById('offline');
-        const statusDiv = document.getElementById('status');
-
-        let progressValue = 0;
-        const progressInterval = setInterval(() => {
-            progressValue = Math.min(progressValue + Math.random() * 15, 90);
-            progress.style.width = progressValue + '%';
-        }, 300);
-
-        async function redirect() {
-            try {
-                const res = await fetch('/current-url.json?t=' + Date.now());
-                if (!res.ok) throw new Error('Fetch failed');
-                const data = await res.json();
-                if (data.url && data.url !== 'https://trycloudflare.com') {
-                    clearInterval(progressInterval);
-                    progress.style.width = '100%';
-                    statusText.textContent = 'Redirection…';
-                    setTimeout(() => { window.location.href = data.url; }, 500);
-                } else {
-                    throw new Error('No valid URL');
-                }
-            } catch (e) {
-                clearInterval(progressInterval);
-                statusDiv.style.display = 'none';
-                if (!navigator.onLine) {
-                    offlineDiv.style.display = 'block';
-                } else {
-                    errorDiv.style.display = 'block';
-                }
-            }
-        }
-
-        redirect();
-    </script>
+  <!-- App Module -->
+  <script type="module" src="/static/js/app.js"></script>
 </body>
 </html>
+

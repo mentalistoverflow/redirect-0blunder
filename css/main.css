@@ -1,0 +1,622 @@
+/* ========================================================================
+   Chess-Learn — Main Layout CSS + Glass Design System
+   DaisyUI drawer (sidebar) + content area + optional right panel
+   Glass utilities + DaisyUI overrides
+   ======================================================================== */
+
+/* ── Accessibility: screen-reader-only utility ─────────────────────────── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.sr-only.focus\:not-sr-only:focus,
+.focus\:not-sr-only:focus {
+  position: absolute;
+  width: auto;
+  height: auto;
+  padding: 0;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* Skip-to-content link styling */
+a.sr-only:focus {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 9999;
+  padding: 8px 16px;
+  background: var(--color-primary, #e94560);
+  color: var(--color-primary-content, #fff);
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 600;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* ── Desktop: no top navbar → zero nav-height ─────────────────────────── */
+@media (min-width: 1024px) {
+  :root { --nav-height: 0px; }
+}
+
+/* ── Base body ──────────────────────────────────────────────────────────── */
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--color-base-100, #0f0f1a);
+  color: var(--color-base-content, #e2e2ef);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* ── Glass Utility Classes ─────────────────────────────────────────────── */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--rounded-box);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-subtle {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+}
+
+.glass-hover:hover {
+  background: var(--glass-bg-hover);
+}
+
+/* ── Drawer layout (DaisyUI fallback) ──────────────────────────────────── */
+.drawer {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.drawer-toggle {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* Main content takes full width on mobile */
+.drawer > .drawer-content {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;             /* flex flex-col fallback */
+  flex-direction: column;
+}
+
+/* Sidebar hidden off-screen on mobile (overlay mode) */
+.drawer-side {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100dvh;
+  pointer-events: none;
+  visibility: hidden;
+  overflow: hidden;
+  z-index: 40;
+  transition: visibility 0.3s;
+}
+
+.drawer-side > * {
+  transition: transform 0.3s ease-in-out;
+}
+
+/* The sidebar panel itself slides in */
+#main-sidebar {
+  transform: translateX(-100%);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  max-height: 100dvh;
+  scrollbar-width: thin;
+}
+/* Hide scrollbar on mobile sidebar for cleaner look */
+@media (max-width: 1023px) {
+  #main-sidebar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  #main-sidebar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Show sidebar when hamburger toggle is checked */
+.drawer-toggle:checked ~ .drawer-side {
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.drawer-toggle:checked ~ .drawer-side #main-sidebar {
+  transform: translateX(0);
+}
+
+/* Overlay backdrop — covers full screen behind sidebar */
+.drawer-overlay {
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.drawer-toggle:checked ~ .drawer-side .drawer-overlay {
+  opacity: 1;
+}
+
+/* Sidebar above overlay */
+.drawer-side > aside {
+  position: relative;
+  z-index: 1;
+}
+
+/* Desktop: sidebar always visible, side-by-side grid layout */
+@media (min-width: 1024px) {
+  .lg\:drawer-open {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+  }
+  .lg\:drawer-open > .drawer-content {
+    grid-column: 2;
+    grid-row: 1;
+    width: auto;
+  }
+  .lg\:drawer-open > .drawer-side {
+    position: sticky;
+    top: 0;
+    grid-column: 1;
+    grid-row: 1;
+    width: auto;
+    height: 100vh;
+    visibility: visible;
+    pointer-events: auto;
+    overflow-y: auto;
+    transition: none;
+  }
+  .lg\:drawer-open > .drawer-side #main-sidebar {
+    transform: translateX(0);
+  }
+  .lg\:drawer-open > .drawer-side > .drawer-overlay {
+    display: none;
+  }
+}
+
+/* ── Navbar mobile fallback ───────────────────────────────────────────── */
+#main-navbar {
+  display: flex;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 30;
+}
+#main-navbar .flex-none { flex: none; }
+#main-navbar .flex-1 { flex: 1 1 0%; }
+#main-navbar .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+#main-navbar .font-bold { font-weight: 700; }
+#main-navbar .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  border-radius: var(--rounded-btn, 0.5rem);
+  height: 2.5rem;
+  width: 2.5rem;
+  padding: 0;
+  color: inherit;
+}
+#main-navbar .btn:hover {
+  background: var(--glass-bg-hover, rgba(255,255,255,0.08));
+}
+
+/* Hide navbar on desktop (lg:hidden fallback) */
+@media (min-width: 1024px) {
+  #main-navbar { display: none !important; }
+}
+
+/* ── Sidebar fallback (Tailwind/DaisyUI CDN may fail) ────────────────── */
+/* These ensure the sidebar renders correctly even without Tailwind CDN */
+#main-sidebar {
+  width: 16rem;          /* w-64 */
+  padding: 1rem;         /* p-4 */
+  min-height: 100%;      /* min-h-full */
+  background: color-mix(in oklch, var(--color-base-200) 90%, transparent) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-right: 1px solid var(--glass-border);
+  display: flex;
+  flex-direction: column;
+}
+
+/* DaisyUI .menu fallback — vertical nav list */
+#main-sidebar .menu {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  gap: 2px;
+}
+
+#main-sidebar .menu li {
+  display: flex;
+  flex-direction: column;
+}
+
+#main-sidebar .menu li a {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* DaisyUI .menu-title fallback */
+#main-sidebar .menu .menu-title {
+  padding: 8px 14px 4px;
+  pointer-events: none;
+}
+
+/* Tailwind utility fallbacks for sidebar content */
+#main-sidebar .flex { display: flex; }
+#main-sidebar .flex-1 { flex: 1 1 0%; }
+#main-sidebar .items-center { align-items: center; }
+#main-sidebar .gap-2 { gap: 0.5rem; }
+#main-sidebar .font-medium { font-weight: 500; }
+#main-sidebar .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+#main-sidebar .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* DaisyUI .btn fallback for sidebar */
+#main-sidebar .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  border-radius: var(--rounded-btn, 0.5rem);
+  transition: background 0.15s;
+}
+#main-sidebar .btn:hover {
+  background: var(--glass-bg-hover, rgba(255,255,255,0.08));
+}
+#main-sidebar .btn-sm {
+  height: 2rem;
+  min-height: 2rem;
+  padding: 0 0.5rem;
+  font-size: 0.875rem;
+}
+#main-sidebar .btn-square {
+  width: 2rem;
+  padding: 0;
+}
+#main-sidebar .btn-ghost {
+  background: transparent;
+  color: inherit;
+}
+
+/* User section pinned to bottom */
+.sidebar-user {
+  margin-top: auto;
+  padding: 12px 8px;
+  border-top: 1px solid var(--glass-border, rgba(255,255,255,0.08));
+}
+.sidebar-user-link {
+  color: inherit;
+  text-decoration: none;
+}
+.sidebar-user-link:hover {
+  text-decoration: underline;
+}
+.sidebar-user-ratings {
+  display: flex;
+  gap: 10px;
+  font-size: 0.7rem;
+  color: color-mix(in srgb, currentColor 65%, transparent);
+  padding-left: 20px;
+  margin-top: 2px;
+}
+
+/* Sidebar branding */
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 4px 20px;
+  color: var(--color-primary, #e94560);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.sidebar-brand svg {
+  flex-shrink: 0;
+}
+
+/* Slashed zero — diagonal line through "0" in brand name */
+.slashed-zero {
+  position: relative;
+  display: inline-block;
+}
+.slashed-zero::after {
+  content: '';
+  position: absolute;
+  top: 15%;
+  left: 20%;
+  right: 20%;
+  bottom: 15%;
+  background: linear-gradient(
+    to bottom right,
+    transparent calc(50% - 1px),
+    currentColor calc(50% - 1px),
+    currentColor calc(50% + 1px),
+    transparent calc(50% + 1px)
+  );
+  pointer-events: none;
+}
+
+/* Menu styling */
+#main-sidebar .menu li a {
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: var(--rounded-btn, 0.5rem);
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: background 0.15s, color 0.15s;
+}
+
+#main-sidebar .menu li a svg {
+  flex-shrink: 0;
+  opacity: 0.75;
+}
+
+#main-sidebar .menu li a.active {
+  background-color: var(--color-primary, #e94560);
+  color: var(--color-primary-content, #ffffff);
+}
+
+#main-sidebar .menu li a.active svg {
+  opacity: 1;
+}
+
+#main-sidebar .menu li a:hover:not(.active) {
+  background: var(--glass-bg-hover);
+}
+
+.menu-title span {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.5;
+  font-weight: 600;
+}
+
+/* ── Navbar — Glass ────────────────────────────────────────────────────── */
+#main-navbar {
+  padding: 0 16px;
+  min-height: 52px;
+  background: color-mix(in oklch, var(--color-base-100) 85%, transparent) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+/* ── Connection status ──────────────────────────────────────────────────── */
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  background-color: var(--color-error, #f87272);
+}
+
+.status-indicator.connected {
+  background-color: var(--color-success, #36d399);
+}
+
+/* ── Layout body (content + right panel) ────────────────────────────────── */
+#global-challenges {
+  padding: 0 16px;
+}
+#global-challenges:empty {
+  display: none;
+}
+.layout-body {
+  display: flex;
+  flex: 1;
+  min-height: calc(100vh - 52px);
+  overflow: hidden;
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  max-width: 1200px;
+}
+
+.right-panel {
+  width: 320px;
+  flex-shrink: 0;
+  border-left: 1px solid var(--glass-border);
+  overflow-y: auto;
+  padding: 16px;
+  background: color-mix(in oklch, var(--color-base-200) 90%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.right-panel.hidden {
+  display: none;
+}
+
+/* ── Card styling — Glass DaisyUI override ──────────────────────────────── */
+.card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* ── Scrollbar styling ──────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: color-mix(in oklch, var(--color-base-content) 20%, transparent);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in oklch, var(--color-base-content) 35%, transparent);
+}
+
+/* ── Utility classes ────────────────────────────────────────────────────── */
+/* Tailwind .hidden fallback */
+.hidden { display: none; }
+
+.text-muted {
+  opacity: 0.6;
+}
+
+.error-text {
+  color: var(--color-error, #f87272);
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid color-mix(in oklch, var(--color-base-content) 15%, transparent);
+  border-top-color: var(--color-primary, #e94560);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 20px auto;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Theme selector cards ───────────────────────────────────────────────── */
+.theme-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 8px;
+  border-radius: var(--rounded-box, 0.75rem);
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.15s;
+  background: var(--glass-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.theme-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--glass-border);
+}
+
+.theme-card-active {
+  border-color: var(--color-primary, #e94560) !important;
+}
+
+.theme-card-preview {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: calc(var(--rounded-box, 0.75rem) - 4px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  overflow: hidden;
+  padding: 4px;
+}
+
+.theme-card-preview svg {
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.theme-card-colors {
+  display: flex;
+  gap: 3px;
+}
+
+.theme-card-colors span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+
+.theme-card-name {
+  font-size: 0.75rem;
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+/* ── Auth page (no sidebar) ─────────────────────────────────────────────── */
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background-color: var(--color-base-100, #0f0f1a);
+}
