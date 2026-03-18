@@ -1,16 +1,24 @@
+# Proxy API vers le tunnel Cloudflare (invisible pour l'utilisateur)
 [[redirects]]
   from = "/api/*"
   to = "https://wooden-magic-questions-dakota.trycloudflare.com/api/:splat"
   status = 200
   force = true
 
+# Proxy WebSocket
 [[redirects]]
   from = "/ws/*"
   to = "https://wooden-magic-questions-dakota.trycloudflare.com/ws/:splat"
   status = 200
   force = true
 
-# SPA fallback — toutes les routes non-fichier vers index.html
+# /static/* → fichiers à la racine (le backend Docker sert sous /static/)
+[[redirects]]
+  from = "/static/*"
+  to = "/:splat"
+  status = 200
+
+# SPA fallback
 [[redirects]]
   from = "/*"
   to = "/index.html"
